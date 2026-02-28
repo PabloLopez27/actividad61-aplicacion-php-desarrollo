@@ -3,18 +3,17 @@ version: '3.8'
 services:
   db:
     image: mariadb:11
-    container_name: pz_yeray_db
+    container_name: pz_pablo_db
     deploy:
       resources:
         limits:
           memory: 400M
-      restart_policy:
-        condition: on-failure
+    restart: on-failure
     healthcheck:
-      test: ["CMD", "mariadb", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}", "-e", "SELECT 1 FROM usuarios LIMIT 1;"]
-      interval: 30s
+      test: ["CMD", "mariadb", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}", "-e", "USE ${MYSQL_DATABASE}; SELECT 1 FROM usuarios LIMIT 1;"]
+      interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
     env_file: .env
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -29,9 +28,10 @@ services:
 
   web:
     build: .
-    container_name: pz_yeray_web
+    container_name: pz_pablo_web
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file: .env
     volumes:
       - ./src:/var/www/html
@@ -42,5 +42,6 @@ services:
       resources:
         limits:
           memory: 300M
+
 volumes:
   pz_mysql_data:

@@ -1,107 +1,86 @@
-<?php
-// add.php
-session_start();
+<?php 
 include_once("config.php");
-
-// Control de acceso: Si no hay sesión iniciada, al login
-if (!isset($_SESSION['username'])) {
-    header("Location: login.php");
-    exit();
-}
+session_start();
+if (!isset($_SESSION['username'])) { header("Location: login.php"); exit(); }
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar Rasgo - Project Zomboid</title>
+    <title>Fichaje - UDLP</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-image: url('img/fondoweb.jpg'); 
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
-        .form-container {
-            background-color: white; /* Bloque de texto blanco */
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-top: 20px;
-            margin-bottom: 40px;
-        }
-        .navbar-brand img { margin-right: 10px; }
-        .form-label { color: #333; font-weight: bold; }
-        footer { color: white; text-shadow: 1px 1px 2px black; font-size: 0.9rem; }
-    </style>
 </head>
-<body>
-
-<nav class="navbar navbar-dark bg-dark shadow">
+<body class="bg-light">
+<nav class="navbar navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="home.php">
-            <img src="html/logo2.jpg" alt="logo" width="30" height="30" class="d-inline-block align-text-top">
-            Rasgos de Project Zomboid
-        </a>
+        <span class="navbar-brand">UDLP Manager 2026</span>
     </div>
 </nav>
 
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="form-container">
-                <h2 class="text-dark mb-4 border-bottom pb-2">Añadir Nuevo Rasgo</h2>
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <strong>FICHAJE DE NUEVO JUGADOR</strong>
+                </div>
+                <div class="card-body">
+                    <form action="add_action.php" method="POST">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label class="form-label">Nombre Completo</label>
+                                <input type="text" name="nombre_jugador" class="form-control" placeholder="Ej: Jonathan Viera" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Dorsal</label>
+                                <input type="number" name="dorsal_oficial" class="form-control" min="1" max="99" required>
+                            </div>
+                        </div>
 
-                <form action="add_action.php" method="post">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="nombre_rasgo" class="form-label">Nombre del Rasgo</label>
-                            <input type="text" name="nombre_rasgo" id="nombre_rasgo" class="form-control" placeholder="Ejemplo" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="codigo_rasgo" class="form-label">Código Interno</label>
-                            <input type="text" name="codigo_rasgo" id="codigo_rasgo" class="form-control" placeholder="Ejemplo" required>
-                        </div>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label">Posición en el Campo</label>
+                            <select name="posicion_id" class="form-select" required>
+                                <option value="" selected disabled>Selecciona una posición...</option>
+                                <?php
+                                // Consultamos la tabla relacionada
+                                $sql = "SELECT * FROM posiciones ORDER BY posicion_id ASC";
+                                $resultado = $mysqli->query($sql);
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="puntos_coste" class="form-label">Puntos de Coste</label>
-                            <input type="number" name="puntos_coste" id="puntos_coste" class="form-control" placeholder="Ejemplo" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="es_positivo" class="form-label">Tipo de Rasgo</label>
-                            <select name="es_positivo" id="es_positivo" class="form-select" required>
-                                <option value="" disabled selected>-- Selecciona tipo --</option>
-                                <option value="1">Positivo</option>
-                                <option value="0">Negativo</option>
+                                if ($resultado && $resultado->num_rows > 0) {
+                                    while($fila = $resultado->fetch_assoc()) {
+                                        // El value es el ID (para la FK) y el texto es el Nombre
+                                        echo "<option value='".$fila['posicion_id']."'>".$fila['nombre_posicion']."</option>";
+                                    }
+                                }
+                                ?>
                             </select>
                         </div>
-                    </div>
 
-                    <div class="mb-4">
-                        <label for="descripcion_efecto" class="form-label">Descripción del Efecto</label>
-                        <textarea name="descripcion_efecto" id="descripcion_efecto" class="form-control" rows="4" placeholder="Describe qué hace este rasgo en el juego..." required></textarea>
-                    </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nacionalidad (ISO)</label>
+                                <input type="text" name="nacionalidad_iso" class="form-control" placeholder="Espana" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Edad</label>
+                                <input type="number" name="edad_actual" class="form-control" required>
+                            </div>
+                        </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" name="inserta" value="si" class="btn btn-primary px-4">Guardar Rasgo</button>
-                        <a href="home.php" class="btn btn-outline-secondary px-4">Cancelar</a>
-                    </div>
-                </form>
+                        <div class="mb-4">
+                            <label class="form-label">Valor de Mercado (Millones €)</label>
+                            <input type="number" name="valor_mercado_millones" class="form-control" step="1" required>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-secondary me-md-2" onclick="window.location.href='home.php'">Cancelar</button>
+                            <input type="submit" name="inserta" value="Confirmar Fichaje" class="btn btn-primary">
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <footer class="text-center py-3">
-                <p class="mb-0">Created by Yeray Gutiérrez Mullor</p>
-                <p class="opacity-75">Panel de Superviviente: <?php echo htmlspecialchars($_SESSION['username']); ?></p>
-            </footer>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

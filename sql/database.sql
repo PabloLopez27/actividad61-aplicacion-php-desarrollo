@@ -1,10 +1,9 @@
-CREATE DATABASE IF NOT EXISTS pz_yeray
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;;
+-- Asegurar que usamos la base de datos correcta
+CREATE DATABASE IF NOT EXISTS pz_pablo;
+USE pz_pablo;
 
-USE pz_yeray;
-
-CREATE TABLE usuarios (
+-- 1. Tabla: usuarios (Preparada para HASH con VARCHAR 255)
+CREATE TABLE IF NOT EXISTS usuarios (
     usuario_id INT AUTO_INCREMENT PRIMARY KEY, 
     nombre_usuario VARCHAR(50) NOT NULL UNIQUE, 
     contrasena VARCHAR(255) NOT NULL, 
@@ -12,45 +11,50 @@ CREATE TABLE usuarios (
     creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE rasgos (
-    rasgos_id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_rasgo VARCHAR(100) NOT NULL, 
-    codigo_rasgo VARCHAR(20) NOT NULL UNIQUE,
-    puntos_coste INT NOT NULL, 
-    descripcion_efecto TEXT, 
-    es_positivo TINYINT(1) NOT NULL
+-- 2. Tabla (MAESTRA): posiciones
+CREATE TABLE IF NOT EXISTS posiciones (
+    posicion_id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_posicion VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO usuarios (nombre_usuario, contrasena, correo) VALUES 
-('yeray', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'ygutierrezm05@educantabria.es'),
-('usuario1', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario1@usuario1.com'),
-('usuario2', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario2@usuario2.com'),
-('usuario3', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario3@usuario3.com'),
-('usuario4', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario4@usuario4.com'),
-('usuario5', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario5@usuario5.com'),
-('usuario6', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario6@usuario6.com'),
-('usuario7', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario7@usuario7.com'),
-('usuario8', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario8@usuario8.com'),
-('usuario9', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario9@usuario9.com'),
-('usuario10', '$2y$10$4BhxI1XlVbzV0lcr5mlF5e8tzgL2YSue6r4BUHa6.RQHvIDiqaffi', 'usuario10@usuario10.com');
+-- 3. Tabla (PRINCIPAL): jugadores (Con Clave Foránea)
+CREATE TABLE IF NOT EXISTS jugadores (
+    jugadores_id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_jugador VARCHAR(100) NOT NULL,
+    dorsal_oficial INT NOT NULL UNIQUE, 
+    posicion_id INT NOT NULL, 
+    nacionalidad_iso VARCHAR(50) NOT NULL,
+    edad_actual INT NOT NULL,
+    valor_mercado_millones INT NOT NULL,
+    FOREIGN KEY (posicion_id) REFERENCES posiciones(posicion_id)
+);
 
-INSERT INTO rasgos (nombre_rasgo, codigo_rasgo, puntos_coste, descripcion_efecto, es_positivo)
-VALUES ('Ojos de gato', 'CatEyes', 2, 'Mejor vision en la oscuridad.', 1),
-       ('Agil', 'Dexterous', 2, 'Transfiere objetos del inventario mas rapido.', 1),
-       ('Lector rapido', 'FastReader', 2, 'Lee libros en menos tiempo.', 1),('Despierto', 'Wakeful', 2, 'Necesita dormir menos.', 1),
-       ('Organizado', 'Organized', 2, 'Aumenta la capacidad de los contenedores.', 1),
-       ('Gimnasta', 'Gymnast', 5, 'Niveles adicionales en Pies ligeros y Agilidad.', 1),
-       ('Valiente', 'Brave', 4, 'Menos propenso a entrar en panico.', 1),
-       ('Luchador de hachas', 'Axeman', 0, 'Corta madera y ataca mas rapido con hachas (Especial).', 1),
-       ('Fuerte', 'Strong', 10, 'Mas fuerza y capacidad de carga.', 1),
-       ('Resistente', 'Stout', 6, 'Fuerza y capacidad de carga extra.', 1),
-       ('Gran bebedor', 'HighThirst', -6, 'Necesita beber mas agua para sobrevivir.', 0),
-       ('Fumador', 'Smoker', -4, 'Necesita fumar para reducir el estres y la ansiedad.', 0),
-       ('Sordo', 'Deaf', -12, 'Radio de percepcion reducido y no oye nada.', 0),
-       ('Miope', 'ShortSighted', -2, 'Menor radio de vision y degradacion de la vista.', 0),
-       ('Lento leyendo', 'SlowReader', -2, 'Tarda mas tiempo en leer libros.', 0),
-       ('Miedoso', 'Cowardly', -2, 'Mas propenso a entrar en panico.', 0),
-       ('Estomago debil', 'WeakStomach', -3, 'Mayor probabilidad de enfermedad por comida.', 0),
-       ('Hemofobico', 'Hemophobic', -5, 'Panico al curar heridas y estres al estar ensangrentado.', 0),
-       ('Agorafobico', 'Agoraphobic', -4, 'Entra en panico cuando esta en exteriores.', 0),
-       ('Asmatico', 'Asthmatic', -5, 'La resistencia se agota mas rapido.', 0);
+-- Inserción de las posiciones
+INSERT INTO posiciones (nombre_posicion) VALUES 
+('Portero'), 
+('Defensa'), 
+('Centrocampista'), 
+('Delantero');
+
+-- Inserción de usuarios de prueba 
+-- NOTA: La contraseña de todos estos es '1234' (encriptada para password_verify)
+INSERT INTO usuarios (nombre_usuario, contrasena, correo) VALUES 
+('pablo_lpz', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'pablo@ejemplo.com'),
+('admin_canario', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'admin@udlp.es'),
+('user3', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'user3@test.com'),
+('user4', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'user4@test.com'),
+('user5', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'user5@test.com');
+
+-- Inserción de 10 jugadores (UD Las Palmas 2026)
+INSERT INTO jugadores (nombre_jugador, dorsal_oficial, posicion_id, nacionalidad_iso, edad_actual, valor_mercado_millones)
+VALUES 
+('Jasper Cillessen', 1, 1, 'Paises Bajos', 36, 2),
+('Mika Marmol', 3, 2, 'Espana', 24, 15),
+('Alex Suarez', 4, 2, 'Espana', 32, 3),
+('Fabio Gonzalez', 6, 3, 'Espana', 28, 2),
+('Sandro Ramirez', 9, 4, 'Espana', 30, 4),
+('Alberto Moleiro', 10, 3, 'Espana', 22, 20),
+('Enzo Loiodice', 12, 3, 'Francia', 25, 5),
+('Oli McBurnie', 16, 4, 'Escocia', 29, 6),
+('Kirian Rodriguez', 20, 3, 'Espana', 29, 12),
+('Dario Essugo', 29, 3, 'Portugal', 20, 4);
