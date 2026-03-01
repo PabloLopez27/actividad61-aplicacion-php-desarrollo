@@ -1,4 +1,3 @@
-¡Claro, Pablo! Aquí tienes el archivo README.md adaptado al 100% a tu proyecto de la UD Las Palmas, manteniendo la estructura profesional que me pasaste pero con todos tus datos actuales.
 
 🟡 UD Las Palmas - Sistema de Gestión de Plantilla (DB)
 Este repositorio contiene la configuración de la base de datos MariaDB para una aplicación web CRUD en Vanilla PHP dockerizada. La temática principal es la gestión de los jugadores y sus posiciones dentro de la plantilla oficial de la UD Las Palmas.
