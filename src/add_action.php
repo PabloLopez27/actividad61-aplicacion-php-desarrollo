@@ -38,7 +38,26 @@ if(isset($_POST['inserta']))
     
     $nacionalidad = isset($_POST['nacionalidad_iso']) ? trim($mysqli->real_escape_string($_POST['nacionalidad_iso'])) : '';
     $edad = isset($_POST['edad_actual']) ? intval($_POST['edad_actual']) : 0;
-    $valor = isset($_POST['valor_mercado_millones']) ? intval($_POST['valor_mercado_millones']) : 0;
+    // Sanitizar y validar valor de mercado (en millones)
+    $valor = 0;
+    if (isset($_POST['valor_mercado_millones'])) {
+        $raw_valor = str_replace([',', ' '], ['', ''], $_POST['valor_mercado_millones']);
+        if (is_numeric($raw_valor)) {
+            // Permitimos decimales en la entrada, pero almacenamos como entero (millones)
+            $valor = intval(round(floatval($raw_valor)));
+        } else {
+            $valor = 0;
+        }
+    }
+
+    // Validar rango para evitar 'Out of range' en la columna INT(11)
+    $min_valor = -2147483648;
+    $max_valor = 2147483647;
+    if ($valor < $min_valor || $valor > $max_valor) {
+        echo "<div class='alert alert-danger'><strong>Error:</strong> El valor de mercado está fuera de rango.</div>";
+        echo "<a href='javascript:self.history.back();' class='btn btn-outline-danger'>Volver atrás</a>";
+        exit();
+    }
 
     // 2. Validación de campos (Aseguramos que el ID de posición no sea 0)
     if(empty($nombre) || $posicion_id <= 0 || $dorsal <= 0) 

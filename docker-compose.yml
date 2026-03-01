@@ -1,7 +1,7 @@
 services:
   db:
     image: mariadb:11
-    container_name: pz_pablo_db
+    container_name: udlp
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: "PabloLopez@2004"
@@ -14,11 +14,14 @@ services:
       - pz_pablo_network
 
   web:
-    image: plopezc03/actividad61-aplicacion-crud-php:latest
+    build: .
     container_name: pz_pablo_web
     restart: always
     ports:
       - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./conf/000-default.conf:/etc/apache2/sites-available/000-default.conf
     depends_on:
       - db
     networks:

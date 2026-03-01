@@ -1,15 +1,24 @@
 FROM php:8.2-apache
 
-# Instalamos las extensiones necesarias (pdo para lo antiguo, mysqli para lo nuevo)
+# 1. Extensiones
 RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Configuramos el directorio de trabajo
+# 2. Creamos una configuración TOTALMENTE NUEVA con otro nombre
+RUN echo "<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html\n\
+    <Directory /var/www/html>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+</VirtualHost>" > /etc/apache2/sites-available/misitio.conf
+
+# 3. Desactivamos el sitio con error y activamos el nuevo
+RUN a2dissite 000-default.conf && a2ensite misitio.conf
+
 WORKDIR /var/www/html
 
-# Copiamos el contenido de tu carpeta src (donde están home.php, login.php, etc.)
 COPY src/ .
 
-# Ajustamos permisos para que Apache pueda leer los archivos
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80

@@ -1,5 +1,7 @@
 -- 1. Tabla: usuarios (Cambiado de 'users' a 'usuarios')
 -- Ajustado para coincidir con lo que busca registro_action.php y login_action.php
+Create database if not exists ud_las_palmas_2026;
+use ud_las_palmas_2026;
 CREATE TABLE IF NOT EXISTS usuarios (
     usuario_id INT AUTO_INCREMENT PRIMARY KEY, 
     nombre_usuario VARCHAR(50) NOT NULL UNIQUE, 

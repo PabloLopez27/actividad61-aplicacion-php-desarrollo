@@ -42,11 +42,24 @@ $fila = $resultado->fetch_assoc();
 
                 <div class="mb-3">
                     <label class="form-label">Posición</label>
-                    <select name="posicion_campo" class="form-select">
-                        <option value="Portero" <?php if($fila['posicion_campo']=='Portero') echo 'selected'; ?>>Portero</option>
-                        <option value="Defensa" <?php if($fila['posicion_campo']=='Defensa') echo 'selected'; ?>>Defensa</option>
-                        <option value="Centrocampista" <?php if($fila['posicion_campo']=='Centrocampista') echo 'selected'; ?>>Centrocampista</option>
-                        <option value="Delantero" <?php if($fila['posicion_campo']=='Delantero') echo 'selected'; ?>>Delantero</option>
+                    <select name="posicion_id" class="form-select">
+                        <?php
+                        // Cargar posiciones desde la tabla `posiciones` para mantener consistencia con la BD
+                        $pos_res = $mysqli->query("SELECT posicion_id, nombre_posicion FROM posiciones ORDER BY posicion_id");
+                        if ($pos_res) {
+                            while ($pos = $pos_res->fetch_assoc()) {
+                                $sel = ($fila['posicion_id'] == $pos['posicion_id']) ? 'selected' : '';
+                                echo "<option value=\"".intval($pos['posicion_id'])."\" $sel>".htmlspecialchars($pos['nombre_posicion'])."</option>";
+                            }
+                        } else {
+                            // Fallback estático si la tabla no existe por algún motivo
+                            $options = ['Portero','Defensa','Centrocampista','Delantero'];
+                            foreach ($options as $opt) {
+                                $sel = ($fila['posicion_id'] == $opt) ? 'selected' : '';
+                                echo "<option value=\"".htmlspecialchars($opt)."\" $sel>".htmlspecialchars($opt)."</option>";
+                            }
+                        }
+                        ?>
                     </select>
                 </div>
 
