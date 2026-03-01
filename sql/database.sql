@@ -1,8 +1,5 @@
--- Asegurar que usamos la base de datos correcta
-CREATE DATABASE IF NOT EXISTS pz_pablo;
-USE pz_pablo;
-
--- 1. Tabla: usuarios (Preparada para HASH con VARCHAR 255)
+-- 1. Tabla: usuarios (Cambiado de 'users' a 'usuarios')
+-- Ajustado para coincidir con lo que busca registro_action.php y login_action.php
 CREATE TABLE IF NOT EXISTS usuarios (
     usuario_id INT AUTO_INCREMENT PRIMARY KEY, 
     nombre_usuario VARCHAR(50) NOT NULL UNIQUE, 
@@ -17,7 +14,7 @@ CREATE TABLE IF NOT EXISTS posiciones (
     nombre_posicion VARCHAR(50) NOT NULL UNIQUE
 );
 
--- 3. Tabla (PRINCIPAL): jugadores (Con Clave Foránea)
+-- 3. Tabla (PRINCIPAL): jugadores
 CREATE TABLE IF NOT EXISTS jugadores (
     jugadores_id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_jugador VARCHAR(100) NOT NULL,
@@ -36,8 +33,8 @@ INSERT INTO posiciones (nombre_posicion) VALUES
 ('Centrocampista'), 
 ('Delantero');
 
--- Inserción de usuarios de prueba 
--- NOTA: La contraseña de todos estos es '1234' (encriptada para password_verify)
+-- Inserción de TODOS tus usuarios de prueba
+-- La contraseña de todos es '1234'
 INSERT INTO usuarios (nombre_usuario, contrasena, correo) VALUES 
 ('pablo_lpz', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'pablo@ejemplo.com'),
 ('admin_canario', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'admin@udlp.es'),
@@ -45,7 +42,7 @@ INSERT INTO usuarios (nombre_usuario, contrasena, correo) VALUES
 ('user4', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'user4@test.com'),
 ('user5', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'user5@test.com');
 
--- Inserción de 10 jugadores (UD Las Palmas 2026)
+-- Inserción de tus 10 jugadores (UD Las Palmas 2026)
 INSERT INTO jugadores (nombre_jugador, dorsal_oficial, posicion_id, nacionalidad_iso, edad_actual, valor_mercado_millones)
 VALUES 
 ('Jasper Cillessen', 1, 1, 'Paises Bajos', 36, 2),

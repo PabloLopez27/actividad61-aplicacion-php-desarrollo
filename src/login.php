@@ -78,7 +78,7 @@ unset($_SESSION['login_error']);
 <nav class="navbar navbar-dark bg-dark shadow shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="index.php">
-            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0e/UD_Las_Palmas_logo.svg/1200px-UD_Las_Palmas_logo.svg.png" alt="logo" width="30" height="35" class="d-inline-block align-text-top me-2">
+            <img src="/home/ubuntu/actividad61-aplicacion-php-desarrollo/src/img/fondoweb.jpg" alt="logo" width="30" height="35" class="d-inline-block align-text-top me-2">
             Gestión UD Las Palmas 2026
         </a>
     </div>
@@ -87,7 +87,7 @@ unset($_SESSION['login_error']);
 <div class="container login-container py-4">
     <div class="card">
         <div class="card-body p-4 text-center">
-            <img src="https://upload.wikimedia.org/wikipedia/en/thumb/0/0e/UD_Las_Palmas_logo.svg/1200px-UD_Las_Palmas_logo.svg.png" width="80" class="mb-3">
+            <img src="/home/ubuntu/actividad61-aplicacion-php-desarrollo/src/img/fondoweb.jpg" width="80" class="mb-3">
             <h3 class="card-title text-center mb-4" style="color: #000080;">Acceso Staff</h3>
             
             <?php if ($error !== ""): ?>

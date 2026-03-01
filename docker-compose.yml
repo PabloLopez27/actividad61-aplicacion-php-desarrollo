@@ -1,47 +1,29 @@
-version: '3.8'
-
 services:
   db:
     image: mariadb:11
     container_name: pz_pablo_db
-    deploy:
-      resources:
-        limits:
-          memory: 400M
-    restart: on-failure
-    healthcheck:
-      test: ["CMD", "mariadb", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}", "-e", "USE ${MYSQL_DATABASE}; SELECT 1 FROM usuarios LIMIT 1;"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    env_file: .env
+    restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      MARIADB_ROOT_PASSWORD: "PabloLopez@2004"
+      MARIADB_DATABASE: "ud_las_palmas_2026"
+      MARIADB_USER: "usuarioPaLo"
+      MARIADB_PASSWORD: "usuario@1"
     volumes:
-      - pz_mysql_data:/var/lib/mysql
       - ./sql/database.sql:/docker-entrypoint-initdb.d/database.sql
-    ports:
-      - "3307:3306"
+    networks:
+      - pz_pablo_network
 
   web:
-    build: .
+    image: plopezc03/actividad61-aplicacion-crud-php:latest
     container_name: pz_pablo_web
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file: .env
-    volumes:
-      - ./src:/var/www/html
-      - ./conf/000-default.conf:/etc/apache2/sites-available/000-default.conf
+    restart: always
     ports:
       - "8080:80"
-    deploy:
-      resources:
-        limits:
-          memory: 300M
+    depends_on:
+      - db
+    networks:
+      - pz_pablo_network
 
-volumes:
-  pz_mysql_data:
+networks:
+  pz_pablo_network:
+    driver: bridge
