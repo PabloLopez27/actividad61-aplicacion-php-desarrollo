@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS jugadores (
     jugadores_id INT AUTO_INCREMENT PRIMARY KEY,
     nombre_jugador VARCHAR(100) NOT NULL,
     dorsal_oficial INT NOT NULL UNIQUE, 
-    posicion_id INT NOT NULL, 
+    posicion_id INT NOT NULL,
+    posicion_campo VARCHAR(50),
     nacionalidad_iso VARCHAR(50) NOT NULL,
     edad_actual INT NOT NULL,
     valor_mercado_millones INT NOT NULL,
@@ -45,15 +46,15 @@ INSERT INTO usuarios (nombre_usuario, contrasena, correo) VALUES
 ('user5', '$2y$10$8Q6X/m0qN6vW1m0qN6vW1.7R7R7R7R7R7R7R7R7R7R7R7R7R7R7R7', 'user5@test.com');
 
 -- Inserción de tus 10 jugadores (UD Las Palmas 2026)
-INSERT INTO jugadores (nombre_jugador, dorsal_oficial, posicion_id, nacionalidad_iso, edad_actual, valor_mercado_millones)
+INSERT INTO jugadores (nombre_jugador, dorsal_oficial, posicion_id, posicion_campo, nacionalidad_iso, edad_actual, valor_mercado_millones)
 VALUES 
-('Jasper Cillessen', 1, 1, 'Paises Bajos', 36, 2),
-('Mika Marmol', 3, 2, 'Espana', 24, 15),
-('Alex Suarez', 4, 2, 'Espana', 32, 3),
-('Fabio Gonzalez', 6, 3, 'Espana', 28, 2),
-('Sandro Ramirez', 9, 4, 'Espana', 30, 4),
-('Alberto Moleiro', 10, 3, 'Espana', 22, 20),
-('Enzo Loiodice', 12, 3, 'Francia', 25, 5),
-('Oli McBurnie', 16, 4, 'Escocia', 29, 6),
-('Kirian Rodriguez', 20, 3, 'Espana', 29, 12),
-('Dario Essugo', 29, 3, 'Portugal', 20, 4);
+('Jasper Cillessen', 1, 1, 'Portero', 'Paises Bajos', 36, 2),
+('Mika Marmol', 3, 2, 'Defensa', 'Espana', 24, 15),
+('Alex Suarez', 4, 2, 'Defensa', 'Espana', 32, 3),
+('Fabio Gonzalez', 6, 3, 'Centrocampista', 'Espana', 28, 2),
+('Sandro Ramirez', 9, 4, 'Delantero', 'Espana', 30, 4),
+('Alberto Moleiro', 10, 3, 'Centrocampista', 'Espana', 22, 20),
+('Enzo Loiodice', 12, 3, 'Centrocampista', 'Francia', 25, 5),
+('Oli McBurnie', 16, 4, 'Delantero', 'Escocia', 29, 6),
+('Kirian Rodriguez', 20, 3, 'Centrocampista', 'Espana', 29, 12),
+('Dario Essugo', 29, 3, 'Centrocampista', 'Portugal', 20, 4);

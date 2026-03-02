@@ -79,9 +79,19 @@ if(isset($_POST['inserta']))
             echo "<a href='javascript:self.history.back();' class='btn btn-warning'>Elegir otro dorsal</a>";
         } 
         else {
-            // 4. Inserción usando el ID de la tabla relacionada (posicion_id)
-            $sql = "INSERT INTO jugadores (nombre_jugador, dorsal_oficial, posicion_id, nacionalidad_iso, edad_actual, valor_mercado_millones) 
-                    VALUES ('$nombre', $dorsal, $posicion_id, '$nacionalidad', $edad, $valor)";
+            // 4. Obtener el nombre de la posición desde la tabla posiciones
+            $pos_sql = "SELECT nombre_posicion FROM posiciones WHERE posicion_id = $posicion_id";
+            $pos_result = $mysqli->query($pos_sql);
+            $posicion_nombre = '';
+            
+            if($pos_result && $pos_result->num_rows > 0) {
+                $pos_row = $pos_result->fetch_assoc();
+                $posicion_nombre = $mysqli->real_escape_string($pos_row['nombre_posicion']);
+            }
+            
+            // 5. Inserción usando el ID de la tabla relacionada (posicion_id) y descripción textual (posicion_campo)
+            $sql = "INSERT INTO jugadores (nombre_jugador, dorsal_oficial, posicion_id, posicion_campo, nacionalidad_iso, edad_actual, valor_mercado_millones) 
+                    VALUES ('$nombre', $dorsal, $posicion_id, '$posicion_nombre', '$nacionalidad', $edad, $valor)";
             
             if($mysqli->query($sql)) {
                 echo "<div class='alert alert-success'>";

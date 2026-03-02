@@ -7,12 +7,16 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Obtener el ID del jugador
-$id = $_GET['id']; 
+// Obtener el ID del jugador y sanearlo
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0; 
 
 // Extraer datos actuales
 $resultado = $mysqli->query("SELECT * FROM jugadores WHERE jugadores_id = $id");
 $fila = $resultado->fetch_assoc();
+
+if (!$fila) {
+    die("Jugador no encontrado.");
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -24,43 +28,45 @@ $fila = $resultado->fetch_assoc();
 <body class="bg-light">
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6 shadow-sm bg-white p-4 rounded">
-            <h2 class="mb-4">Modificar Jugador</h2>
+        <div class="col-md-6 shadow-sm bg-white p-4 rounded mb-5">
+            <h2 class="mb-4 text-primary">Modificar Jugador</h2>
             <form action="edit_action.php" method="post">
                 
                 <input type="hidden" name="id" value="<?php echo $fila['jugadores_id']; ?>">
-
+                
                 <div class="mb-3">
-                    <label class="form-label">Nombre del Jugador</label>
+                    <label class="form-label font-weight-bold">Nombre del Jugador</label>
                     <input type="text" name="nombre_jugador" class="form-control" value="<?php echo $fila['nombre_jugador']; ?>" required>
                 </div>
 
-                <div class="mb-3 text-muted">
-                    <label class="form-label">Dorsal (No modificable por ser Único)</label>
-                    <input type="number" name="dorsal_oficial" class="form-control bg-light" value="<?php echo $fila['dorsal_oficial']; ?>" readonly>
+                <div class="mb-3">
+                    <label class="form-label">Dorsal Oficial</label>
+                    <input type="number" name="dorsal_oficial" class="form-control" value="<?php echo $fila['dorsal_oficial']; ?>" required>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Posición</label>
+                    <label class="form-label">Categoría de Posición</label>
                     <select name="posicion_id" class="form-select">
-                        <?php
-                        // Cargar posiciones desde la tabla `posiciones` para mantener consistencia con la BD
-                        $pos_res = $mysqli->query("SELECT posicion_id, nombre_posicion FROM posiciones ORDER BY posicion_id");
-                        if ($pos_res) {
-                            while ($pos = $pos_res->fetch_assoc()) {
-                                $sel = ($fila['posicion_id'] == $pos['posicion_id']) ? 'selected' : '';
-                                echo "<option value=\"".intval($pos['posicion_id'])."\" $sel>".htmlspecialchars($pos['nombre_posicion'])."</option>";
-                            }
-                        } else {
-                            // Fallback estático si la tabla no existe por algún motivo
-                            $options = ['Portero','Defensa','Centrocampista','Delantero'];
-                            foreach ($options as $opt) {
-                                $sel = ($fila['posicion_id'] == $opt) ? 'selected' : '';
-                                echo "<option value=\"".htmlspecialchars($opt)."\" $sel>".htmlspecialchars($opt)."</option>";
-                            }
-                        }
-                        ?>
+                        <option value="1" <?php if($fila['posicion_id'] == 1) echo 'selected'; ?>>Portero</option>
+                        <option value="2" <?php if($fila['posicion_id'] == 2) echo 'selected'; ?>>Defensa</option>
+                        <option value="3" <?php if($fila['posicion_id'] == 3) echo 'selected'; ?>>Centrocampista</option>
+                        <option value="4" <?php if($fila['posicion_id'] == 4) echo 'selected'; ?>>Delantero</option>
                     </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Posición Específica (ej: Central, Extremo)</label>
+                    <input type="text" name="posicion_campo" class="form-control" value="<?php echo $fila['posicion_campo']; ?>">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nacionalidad (País)</label>
+                    <input type="text" name="nacionalidad_iso" class="form-control" value="<?php echo $fila['nacionalidad_iso']; ?>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Edad Actual</label>
+                    <input type="number" name="edad_actual" class="form-control" value="<?php echo $fila['edad_actual']; ?>" required>
                 </div>
 
                 <div class="mb-3">
@@ -69,8 +75,8 @@ $fila = $resultado->fetch_assoc();
                 </div>
 
                 <div class="mt-4">
-                    <input type="submit" name="actualiza" value="Actualizar Datos" class="btn btn-success">
-                    <button type="button" class="btn btn-secondary" onclick="window.location.href='home.php'">Volver</button>
+                    <button type="submit" name="actualiza" class="btn btn-success">Guardar Cambios</button>
+                    <a href="home.php" class="btn btn-secondary">Cancelar</a>
                 </div>
             </form>
         </div>

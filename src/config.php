@@ -6,7 +6,7 @@ $db_pass = 'usuario@1';
 $db_name = 'ud_las_palmas_2026';
 
 // Intentos de conexión (evita errores "Connection refused" al arrancar contenedores)
-$maxRetries = 10;
+$maxRetries = 30;
 $retry = 0;
 $mysqli = null;
 

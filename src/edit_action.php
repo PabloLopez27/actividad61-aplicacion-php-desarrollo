@@ -1,6 +1,12 @@
 <?php
 session_start();
 include_once("config.php");
+
+// Verificación de sesión
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -14,75 +20,85 @@ include_once("config.php");
             background-image: url('img/fondoweb.jpg'); 
             background-size: cover;
             background-position: center;
-            background-repeat: no-repeat;
             background-attachment: fixed;
-            margin: 0;
-            padding: 0;
             min-height: 100vh;
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
         }
         .container-msg {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
         }
+        .btn-warning { font-weight: bold; background-color: #ffca2c; border: none; }
         a { color: #ffca2c; text-decoration: none; font-weight: bold; }
-        a:hover { color: #fff; }
     </style>
 </head>
 <body>
 <div class="container-msg">
-    <header>
+    <header class="mb-4">
         <h1>Gestión UD Las Palmas</h1>
     </header>
     <main>              
 
 <?php
-/* Se comprueba si se ha pulsado el botón "actualiza" del formulario */
 if(isset($_POST['actualiza'])) {
-    // Recogemos el ID y el nombre que vienen del formulario
+    // 1. Recogida de datos del formulario (Saneados para MySQL)
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
-    $nombre = isset($_POST['nombre_jugador']) ? trim($mysqli->real_escape_string($_POST['nombre_jugador'])) : '';
-    // Ahora recibimos el ID de la posición
-    $posicion_id = isset($_POST['posicion_id']) ? intval($_POST['posicion_id']) : 0;
+    $nombre = $mysqli->real_escape_string($_POST['nombre_jugador']);
+    $dorsal = intval($_POST['dorsal_oficial']);
+    $posicion_id = intval($_POST['posicion_id']);
+    $posicion_campo = $mysqli->real_escape_string($_POST['posicion_campo']);
+    $nacionalidad = $mysqli->real_escape_string($_POST['nacionalidad_iso']);
+    $edad = intval($_POST['edad_actual']);
+    $valor = intval($_POST['valor_mercado_millones']);
 
-    // Comprobamos que no estén vacíos
-    if(empty($nombre) || $id <= 0) 
-    {
-        echo "<div style='color:#ff4d4d; margin-bottom: 20px;'>";
-        if($id <= 0) echo "ID de jugador inválido.<br>";
-        if(empty($nombre)) echo "El nombre del jugador no puede estar vacío.<br>";
-        echo "</div>";
+    // 2. Validación mínima
+    if(empty($nombre) || $id <= 0) {
+        echo "<div class='alert alert-danger'>Error: Faltan datos críticos para la actualización.</div>";
         echo "<a href='javascript:self.history.back();'>[ Volver atrás ]</a>";
     } 
     else 
     {
-        // ACTUALIZACIÓN: usar `posicion_id` (clave foránea) en la tabla
-        $sql = "UPDATE jugadores SET nombre_jugador = '$nombre', posicion_id = $posicion_id WHERE jugadores_id = $id";
+        // 3. Consulta SQL basada EXACTAMENTE en tu archivo .sql
+        $sql = "UPDATE jugadores SET 
+                nombre_jugador = '$nombre', 
+                dorsal_oficial = $dorsal,
+                posicion_id = $posicion_id,
+                posicion_campo = '$posicion_campo',
+                nacionalidad_iso = '$nacionalidad',
+                edad_actual = $edad,
+                valor_mercado_millones = $valor
+                WHERE jugadores_id = $id";
         
         if($mysqli->query($sql)) {
-            echo "<div style='color:#28a745; font-size: 1.5rem; margin-bottom: 20px;'>¡Jugador actualizado correctamente!</div>";
-            echo "<p><a href='home.php'>Ver resultado en la lista</a></p>";
+            echo "<div class='alert alert-success' style='font-size: 1.2rem;'>¡Jugador <strong>$nombre</strong> actualizado con éxito!</div>";
+            echo "<p class='mt-3'><a href='home.php' class='btn btn-warning'>Volver a la Lista Principal</a></p>";
         } else {
-            echo "<div style='color:#ff4d4d;'>Error al editar: " . htmlspecialchars($mysqli->error) . "</div>";
-            echo "<a href='javascript:self.history.back();'>[ Volver atrás ]</a>";
+            echo "<div class='alert alert-danger text-start'>";
+            echo "<strong>Error de base de datos:</strong><br>" . $mysqli->error;
+            echo "</div>";
+            echo "<a href='javascript:self.history.back();'>[ Reintentar ]</a>";
         }
     }
+} else {
+    echo "<p>No se han recibido datos.</p>";
+    echo "<a href='home.php'>[ Ir al Inicio ]</a>";
 }
+
 $mysqli->close();
 ?>
     </main> 
-    <footer class="mt-4">
-        <p>Sesión activa: <?php echo $_SESSION['username']; ?></p>
-        <p><a href="logout.php">Cerrar sesión</a></p>
+    <footer class="mt-4 border-top pt-3">
+        <p>Sesión activa: <?php echo htmlspecialchars($_SESSION['username']); ?></p>
+        <p><a href="logout.php" style="color: #ff4d4d;">Cerrar sesión</a></p>
     </footer>
 </div>
 </body>
 </html>
-EOF
-HEREDOC
